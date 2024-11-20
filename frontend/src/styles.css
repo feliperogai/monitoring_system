@@ -7,13 +7,13 @@
 
 body {
   font-family: 'Arial', sans-serif;
-  background: linear-gradient(135deg, #000000 0%, #141414 100%); /* Gradiente suave */
+  background: url('https://www.fiap.com.br/wp-content/themes/fiap2016/images/fiap/graduacao/curso/header/cc.png') no-repeat center center fixed; /* Usando a imagem como fundo */
+  background-size: cover; /* Faz com que a imagem cubra toda a tela */
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   color: #fff;
-  background-size: cover;
 }
 
 .login-container {
@@ -67,8 +67,8 @@ button:hover {
   background-color: #f50057; /* Roxo mais escuro no hover */
 }
 
-p,a{
-  color: #ff4081
+p,a {
+  color: #ff4081;
 }
 
 .register-link {

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Usando useNavigate
+import { Link } from 'react-router-dom'; // Adicionando a importação do Link
 import styled from 'styled-components';
+import axios from 'axios'; // Para fazer a requisição HTTP
 
 // Componente estilizado para o container
 const LoginContainer = styled.div`
@@ -79,13 +81,65 @@ const RegisterLink = styled.div`
   }
 `;
 
+// Estilo para a mensagem de erro
+const ErrorMessage = styled.p`
+  color: red;
+  font-size: 1rem;
+  margin-top: 10px;
+`;
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Adicionado para controle de carregamento
+  const navigate = useNavigate(); // Usando useNavigate para redirecionamento
 
-  const handleLogin = (e) => {
+  // Função para validar o formulário antes de enviar a requisição
+  const validateForm = () => {
+    if (!email || !senha) {
+      setError('Por favor, preencha todos os campos');
+      return false;
+    }
+    return true;
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Sua lógica de login
+
+    // Limpa erro anterior ao tentar fazer login novamente
+    setError('');
+
+    // Valida a entrada do formulário antes de fazer a requisição
+    if (!validateForm()) return;
+
+    setLoading(true); // Ativa o carregamento
+
+    try {
+      // Requisição POST para o backend
+      const response = await axios.post('http://localhost:5000/api/login', { email, senha });
+
+      // Verificando a resposta do backend
+      console.log(response.status)
+      if (response.status === 200) {
+        // Armazena o token no localStorage
+        localStorage.setItem('authToken', response.data.token);
+        
+        // Redireciona para a página de Tickets
+        navigate('/tickets'); // Usando navigate para redirecionar
+      }
+    } catch (error) {
+      setLoading(false); // Desativa o carregamento
+      // Verificando e exibindo detalhes do erro
+      console.error("Erro de login: ", error.response || error); // Exibe mais informações sobre o erro no console
+
+      if (error.response) {
+        // Exibe a resposta completa do erro, se houver
+        setError(error.response.data.message || 'Erro no login');
+      } else {
+        setError('Erro de servidor, tente novamente mais tarde');
+      }
+    }
   };
 
   return (
@@ -95,8 +149,9 @@ const Login = () => {
       <Title>Login</Title>
       <form onSubmit={handleLogin}>
         <div>
-          <label>Email</label>
+          <label htmlFor="email">Email</label>
           <Input 
+            id="email" // Associando o campo ao label
             type="email" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
@@ -104,14 +159,16 @@ const Login = () => {
           />
         </div>
         <div>
-          <label>Senha</label>
+          <label htmlFor="senha">Senha</label>
           <Input 
+            id="senha" // Associando o campo ao label
             type="password" 
             value={senha} 
             onChange={(e) => setSenha(e.target.value)} 
             required
           />
         </div>
+        {error && <ErrorMessage>{error}</ErrorMessage>} {/* Exibe mensagem de erro */}
         <LoginButton type="submit">Login</LoginButton>
       </form>
 
