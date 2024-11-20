@@ -4,6 +4,12 @@
 
 Este projeto é um sistema de monitoramento com funcionalidades de login, cadastro de usuários e criação de tickets de recarga. Ele possui um backend em Node.js com SQLite como banco de dados e um frontend desenvolvido em React, utilizando o `styled-components` para estilização.
 
+## Desenvolvido por:
+
+Felipe Rogai - RM95938
+Matheus Luchi - RM551097
+Cristiano Soares - RM86951
+
 ## Estrutura do Projeto
 
 A estrutura do projeto é organizada da seguinte forma:
@@ -16,30 +22,6 @@ A estrutura do projeto é organizada da seguinte forma:
 - **SQLite** como banco de dados.
 - **Express.js** para as rotas e servidor.
 - **CORS** para permitir requisições entre frontend e backend.
-
-### Instalação do Backend
-
-1. Navegue até a pasta `backend` no seu terminal:
-
-    ```bash
-    cd monitoring_system/backend
-    ```
-
-2. Instale as dependências:
-
-    ```bash
-    npm install
-    ```
-
-3. Crie o banco de dados e as tabelas necessárias (o script será executado automaticamente quando o servidor for iniciado).
-
-4. Inicie o servidor:
-
-    ```bash
-    npm start
-    ```
-
-   O servidor estará rodando na porta `5000`.
 
 ### Endpoints da API
 
@@ -55,12 +37,12 @@ A estrutura do projeto é organizada da seguinte forma:
 - **Styled-components** para a estilização dos componentes.
 - **React Router** para o gerenciamento de rotas.
 
-### Instalação do Frontend
+### Instalação do Projeto Backend/Frontend
 
-1. Navegue até a pasta `frontend` no seu terminal:
+1. Navegue até a pasta `monitoring_system` no seu terminal:
 
     ```bash
-    cd monitoring_system/frontend
+    cd monitoring_system
     ```
 
 2. Instale as dependências:
@@ -75,6 +57,6 @@ A estrutura do projeto é organizada da seguinte forma:
     npm start
     ```
 
-   O frontend estará disponível na porta `3000` ou `localhost:3000`.
+    O projeto estará disponível na porta `3000` ou `localhost:3000`.
 
 
