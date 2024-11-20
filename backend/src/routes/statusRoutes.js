@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { getUserByEmail, getStatus, getUsers, addUser, addRecargaTicket } = require('../models/statusModel'); // Importando as funções do modelo
+const { getUserByEmail, getStatus, getUsers, addUser, addRecargaTicket, getTicketsByUser} = require('../models/statusModel'); // Importando as funções do modelo
 const router = express.Router();
 
 // Carregando variáveis de ambiente
@@ -73,7 +73,17 @@ router.get('/users', async (req, res) => {
   }
 });
 
-// Rota para obter os tickets
+router.get('/status', async (req, res) => {
+  try {
+    const status = await getStatus(); // Função para buscar os status de recarga do banco de dados
+    res.status(200).json(status); // Retorna os status encontrados
+  } catch (error) {
+    console.error('Erro ao carregar os status de recarga:', error);
+    res.status(500).json({ message: 'Erro ao carregar os status de recarga' });
+  }
+});
+
+// Rota para obter os tickets de um usuário
 router.get('/tickets', async (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1]; // Pegando o token do cabeçalho
   
@@ -84,16 +94,60 @@ router.get('/tickets', async (req, res) => {
   try {
     // Verificar se o token é válido
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Obter os tickets do banco de dados
-    const tickets = await getTickets(); // Função fictícia para obter tickets
+    const userId = decoded.userId;
 
+    // Obter os tickets do usuário
+    const tickets = await getTicketsByUser(userId); // Função para pegar tickets do usuário
     res.status(200).json(tickets);
   } catch (error) {
     console.error('Erro ao verificar token ou obter tickets:', error);
     res.status(401).json({ message: 'Token inválido ou expirado' });
   }
 });
+
+// Rota para criar um novo ticket
+router.post('/tickets', async (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];  // Captura o token JWT
+  if (!token) return res.status(401).json({ message: 'Token não fornecido' });
+
+  try {
+    // Verificar o token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+    
+    const { nome, status, fonteEnergia, horaInicio } = req.body; // Obtendo os dados enviados
+    if (!nome || !status || !fonteEnergia || !horaInicio) {
+      return res.status(400).json({ message: 'Todos os campos são obrigatórios' });
+    }
+
+    // Criar o ticket no banco de dados
+    const ticket = await addRecargaTicket(userId, nome, status, fonteEnergia, horaInicio);
+    res.status(201).json(ticket);
+  } catch (error) {
+    console.error('Erro ao criar o ticket:', error);
+    res.status(500).json({ message: 'Erro ao criar o ticket' });
+  }
+});
+
+// statusRoutes.js
+router.get('/tickets/user', async (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];  // Captura o token JWT
+  if (!token) return res.status(401).json({ message: 'Token não fornecido' });
+
+  try {
+    // Verificar o token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+    
+    // Buscar os tickets criados pelo usuário
+    const tickets = await getTicketsByUser(userId);
+    res.status(200).json(tickets);
+  } catch (error) {
+    console.error('Erro ao carregar os tickets do usuário:', error);
+    res.status(500).json({ message: 'Erro ao carregar os tickets' });
+  }
+});
+
 
 // Exportando as rotas
 module.exports = router;

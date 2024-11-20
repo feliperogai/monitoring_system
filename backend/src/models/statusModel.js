@@ -53,7 +53,7 @@ const createTables = () => {
       )
     `);
 
-    // Criar a tabela de tickets de recarga
+    // Criar a tabela de tickets de recarga (relacionamento com status_recarga e users)
     db.run(`
       CREATE TABLE IF NOT EXISTS recarga_tickets (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -66,7 +66,7 @@ const createTables = () => {
   });
 };
 
-// Função para obter o status de recarga dos veículos
+// Função para obter todos os status de recarga
 const getStatus = () => {
   return new Promise((resolve, reject) => {
     const sql = "SELECT * FROM status_recarga";
@@ -123,14 +123,40 @@ const getUsers = () => {
 };
 
 // Função para adicionar um ticket de recarga, associando um usuário a um status de recarga
-const addRecargaTicket = (userId, statusId) => {
+const addRecargaTicket = (userId, nome, status, fonteEnergia, horaInicio) => {
   return new Promise((resolve, reject) => {
-    const sql = "INSERT INTO recarga_tickets (user_id, status_id) VALUES (?, ?)";
-    db.run(sql, [userId, statusId], function (err) {
+    // Primeiro, insere o status na tabela status_recarga
+    addStatus(nome, status, fonteEnergia, horaInicio)
+      .then(statusData => {
+        // Depois, insere o ticket associando o status_id gerado ao ticket
+        const sql = "INSERT INTO recarga_tickets (user_id, status_id) VALUES (?, ?)";
+        db.run(sql, [userId, statusData.id], function (err) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve({ ticketId: this.lastID, userId, statusId: statusData.id });
+          }
+        });
+      })
+      .catch(err => reject(err));
+  });
+};
+
+// Função para obter todos os tickets de um usuário, com os dados necessários
+const getTicketsByUser = (userId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT recarga_tickets.id AS ticket_id, recarga_tickets.user_id, 
+             status_recarga.id AS status_id, status_recarga.nome, 
+             status_recarga.status, status_recarga.fonteEnergia, status_recarga.horaInicio
+      FROM recarga_tickets
+      JOIN status_recarga ON recarga_tickets.status_id = status_recarga.id
+      WHERE recarga_tickets.user_id = ?`;
+    db.all(sql, [userId], (err, rows) => {
       if (err) {
         reject(err);
       } else {
-        resolve({ id: this.lastID, userId, statusId });
+        resolve(rows);  // Retorna todos os tickets com os detalhes do status
       }
     });
   });
@@ -139,5 +165,14 @@ const addRecargaTicket = (userId, statusId) => {
 // Criar as tabelas (certifique-se de que isso seja feito uma vez no servidor)
 createTables();
 
-// Exportando todas as funções necessárias
-module.exports = { db, getUserByEmail, getStatus, addStatus, addUser, getUsers, addRecargaTicket };
+// Exportando as funções necessárias
+module.exports = { 
+  db, 
+  getUserByEmail, 
+  getStatus, 
+  addStatus, 
+  addUser, 
+  getUsers, 
+  addRecargaTicket, 
+  getTicketsByUser 
+};
