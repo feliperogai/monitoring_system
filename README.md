@@ -1,62 +1,64 @@
 # Global Solution - Engenharia de Computação
 
-# Monitoring System
+## Monitoring System
 
-Este projeto é um sistema de monitoramento com funcionalidades de login, cadastro de usuários e criação de tickets de recarga. Ele possui um backend em Node.js com SQLite como banco de dados e um frontend desenvolvido em React, utilizando o `styled-components` para estilização.
+Este projeto é um sistema de monitoramento com funcionalidades de login, cadastro de usuários e criação de tickets de recarga. O sistema possui um backend em **Node.js** utilizando **SQLite** como banco de dados, e um frontend desenvolvido em **React** com **styled-components** para estilização.
 
-## Desenvolvido por:
-
-Felipe Rogai - RM95938
-Matheus Luchi - RM551097
-Cristiano Soares - RM86951
+### Desenvolvido por:
+- Felipe Rogai - RM95938
+- Matheus Luchi - RM551097
+- Cristiano Soares - RM86951
 
 ## Estrutura do Projeto
 
-A estrutura do projeto é organizada da seguinte forma:
+A estrutura do projeto está dividida em duas partes principais: **Backend** e **Frontend**.
 
-## Backend
+### Backend
 
-### Tecnologias Usadas
+#### Tecnologias Usadas
+- **Node.js**: Para o desenvolvimento do backend.
+- **SQLite**: Banco de dados utilizado para persistência dos dados.
+- **Express.js**: Framework utilizado para criação das rotas e gerenciamento do servidor.
+- **CORS**: Permite o compartilhamento de recursos entre o frontend e o backend.
 
-- **Node.js** para o backend.
-- **SQLite** como banco de dados.
-- **Express.js** para as rotas e servidor.
-- **CORS** para permitir requisições entre frontend e backend.
-
-### Endpoints da API
-
-- **POST `/api/users`**: Cadastra um novo usuário (requisição com `nome`, `email`, `senha`).
-- **POST `/api/recarga-tickets`**: Cria um ticket de recarga (requisição com `userId` e `statusId`).
+#### Endpoints da API
+- **POST `/api/users`**: Cadastra um novo usuário. A requisição deve conter os parâmetros:
+  - `nome` (string)
+  - `email` (string)
+  - `senha` (string)
+  
+- **POST `/api/recarga-tickets`**: Cria um ticket de recarga. A requisição deve conter os parâmetros:
+  - `userId` (ID do usuário)
+  - `statusId` (ID do status da recarga)
+  
 - **GET `/api/status`**: Retorna todos os status de recarga.
 
-## Frontend
+### Frontend
 
-### Tecnologias Usadas
+#### Tecnologias Usadas
+- **React**: Para construção da interface do usuário.
+- **Styled-components**: Para estilização dos componentes de maneira modular e reutilizável.
+- **React Router**: Para gerenciamento das rotas no frontend.
 
-- **React** para a construção da interface do usuário.
-- **Styled-components** para a estilização dos componentes.
-- **React Router** para o gerenciamento de rotas.
+## Instalação e Execução
 
-### Instalação do Projeto Backend/Frontend
+### Passos para executar o backend e o frontend
 
-1. Navegue até a pasta `monitoring_system` no seu terminal:
+1. Clone o repositório ou faça o download do projeto.
 
+2. Navegue até a pasta do projeto **monitoring_system** no seu terminal:
     ```bash
     cd monitoring_system
     ```
 
-2. Instale as dependências:
-
+3. Instale as dependências para o backend e frontend:
     ```bash
     npm install
     ```
 
-3. Inicie o servidor de desenvolvimento:
-
+4. Inicie o servidor de desenvolvimento:
     ```bash
     npm start
     ```
 
-    O projeto estará disponível na porta `3000` ou `localhost:3000`.
-
-
+   O projeto estará disponível no endereço `http://localhost:3000`.
